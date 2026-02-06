@@ -16,10 +16,17 @@ export interface User {
   token: string;
 }
 
-export interface Amenity {
-  id: string;
+export interface Service {
   name: string;
-  icon: string;
+  description: string;
+  price?: string;
+}
+
+export interface Review {
+  userName: string;
+  rating: number;
+  comment: string;
+  date: string;
 }
 
 export interface Hall {
@@ -35,6 +42,8 @@ export interface Hall {
   amenities: string[];
   description: string;
   category: string;
+  services: Service[];
+  reviews: Review[];
 }
 
 export interface EnquiryRequest {

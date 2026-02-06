@@ -15,20 +15,20 @@ const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<AppState>(AppState.SPLASH);
   const [user, setUser] = useState<User | null>(null);
   const [selectedHall, setSelectedHall] = useState<Hall | null>(null);
+  const [intendedAction, setIntendedAction] = useState<{ type: string; hall: Hall } | null>(null);
 
-  // Simulation of App Lifecycle
   useEffect(() => {
+    // Restore session if exists
+    const storedUser = localStorage.getItem('user_session');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
     if (currentScreen === AppState.SPLASH) {
       setTimeout(() => {
         const hasSeenOnboarding = localStorage.getItem('onboarding_seen');
         if (hasSeenOnboarding) {
-          const storedUser = localStorage.getItem('user_session');
-          if (storedUser) {
-            setUser(JSON.parse(storedUser));
-            setCurrentScreen(AppState.HOME);
-          } else {
-            setCurrentScreen(AppState.AUTH);
-          }
+          setCurrentScreen(AppState.HOME);
         } else {
           setCurrentScreen(AppState.ONBOARDING);
         }
@@ -38,13 +38,19 @@ const App: React.FC = () => {
 
   const handleOnboardingComplete = () => {
     localStorage.setItem('onboarding_seen', 'true');
-    setCurrentScreen(AppState.AUTH);
+    setCurrentScreen(AppState.HOME);
   };
 
   const handleLoginSuccess = (userData: User) => {
     setUser(userData);
     localStorage.setItem('user_session', JSON.stringify(userData));
-    setCurrentScreen(AppState.HOME);
+    if (intendedAction) {
+      setSelectedHall(intendedAction.hall);
+      setCurrentScreen(AppState.DETAIL);
+      setIntendedAction(null);
+    } else {
+      setCurrentScreen(AppState.HOME);
+    }
   };
 
   const handleHallSelect = (hall: Hall) => {
@@ -52,10 +58,15 @@ const App: React.FC = () => {
     setCurrentScreen(AppState.DETAIL);
   };
 
+  const handleEnquiryAuthTrigger = (hall: Hall) => {
+    setIntendedAction({ type: 'enquiry', hall });
+    setCurrentScreen(AppState.AUTH);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('user_session');
     setUser(null);
-    setCurrentScreen(AppState.AUTH);
+    setCurrentScreen(AppState.HOME);
   };
 
   const renderScreen = () => {
@@ -65,23 +76,42 @@ const App: React.FC = () => {
       case AppState.ONBOARDING:
         return <OnboardingScreen onComplete={handleOnboardingComplete} />;
       case AppState.AUTH:
-        return <AuthScreen onLoginSuccess={handleLoginSuccess} />;
+        return <AuthScreen onLoginSuccess={handleLoginSuccess} onBack={() => setCurrentScreen(AppState.HOME)} />;
       case AppState.HOME:
-        return <HomeScreen onSelectHall={handleHallSelect} onOpenProfile={() => setCurrentScreen(AppState.PROFILE)} />;
+        return (
+          <HomeScreen 
+            user={user}
+            onSelectHall={handleHallSelect} 
+            onOpenProfile={() => setCurrentScreen(AppState.PROFILE)} 
+            onLoginClick={() => setCurrentScreen(AppState.AUTH)}
+          />
+        );
       case AppState.DETAIL:
         return selectedHall ? (
-          <DetailScreen hall={selectedHall} onBack={() => setCurrentScreen(AppState.HOME)} />
+          <DetailScreen 
+            hall={selectedHall} 
+            user={user}
+            onBack={() => setCurrentScreen(AppState.HOME)} 
+            onAuthRequired={() => handleEnquiryAuthTrigger(selectedHall)}
+          />
         ) : null;
       case AppState.PROFILE:
         return <ProfileScreen user={user} onBack={() => setCurrentScreen(AppState.HOME)} onLogout={handleLogout} />;
       default:
-        return <HomeScreen onSelectHall={handleHallSelect} onOpenProfile={() => setCurrentScreen(AppState.PROFILE)} />;
+        return <HomeScreen 
+          user={user}
+          onSelectHall={handleHallSelect} 
+          onOpenProfile={() => setCurrentScreen(AppState.PROFILE)} 
+          onLoginClick={() => setCurrentScreen(AppState.AUTH)}
+        />;
     }
   };
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-slate-50 relative overflow-hidden shadow-2xl flex flex-col">
-      {renderScreen()}
+    <div className="min-h-screen bg-slate-50 relative overflow-x-hidden flex flex-col items-center">
+      <div className="w-full max-w-7xl min-h-screen bg-white shadow-xl flex flex-col overflow-hidden">
+        {renderScreen()}
+      </div>
     </div>
   );
 };

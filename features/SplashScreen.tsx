@@ -10,7 +10,7 @@ const SplashScreen: React.FC = () => {
           <span className="text-4xl">🏛️</span>
         </div>
       </div>
-      <h1 className="mt-8 text-3xl font-bold tracking-tight poppins">HallQuest</h1>
+      <h1 className="mt-8 text-3xl font-bold tracking-tight poppins text-center px-4">BookMyFunctionHalls</h1>
       <p className="mt-2 text-indigo-100/70 font-medium">Elevating Celebrations</p>
       
       <div className="absolute bottom-12 flex flex-col items-center">

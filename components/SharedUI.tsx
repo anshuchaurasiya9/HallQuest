@@ -41,7 +41,7 @@ export const Input: React.FC<{
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className="px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white transition-all"
+      className="px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white transition-all text-black"
     />
   </div>
 );
