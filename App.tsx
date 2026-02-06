@@ -10,6 +10,8 @@ import AuthScreen from './features/AuthScreen';
 import HomeScreen from './features/HomeScreen';
 import DetailScreen from './features/DetailScreen';
 import ProfileScreen from './features/ProfileScreen';
+import ServicesScreen from './features/ServicesScreen';
+import ListYourVenueScreen from './features/ListYourVenueScreen';
 
 const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<AppState>(AppState.SPLASH);
@@ -84,8 +86,14 @@ const App: React.FC = () => {
             onSelectHall={handleHallSelect} 
             onOpenProfile={() => setCurrentScreen(AppState.PROFILE)} 
             onLoginClick={() => setCurrentScreen(AppState.AUTH)}
+            onServicesClick={() => setCurrentScreen(AppState.SERVICES)}
+            onListVenueClick={() => setCurrentScreen(AppState.LIST_VENUE)}
           />
         );
+      case AppState.SERVICES:
+        return <ServicesScreen onBack={() => setCurrentScreen(AppState.HOME)} />;
+      case AppState.LIST_VENUE:
+        return <ListYourVenueScreen onBack={() => setCurrentScreen(AppState.HOME)} />;
       case AppState.DETAIL:
         return selectedHall ? (
           <DetailScreen 
@@ -103,6 +111,8 @@ const App: React.FC = () => {
           onSelectHall={handleHallSelect} 
           onOpenProfile={() => setCurrentScreen(AppState.PROFILE)} 
           onLoginClick={() => setCurrentScreen(AppState.AUTH)}
+          onServicesClick={() => setCurrentScreen(AppState.SERVICES)}
+          onListVenueClick={() => setCurrentScreen(AppState.LIST_VENUE)}
         />;
     }
   };

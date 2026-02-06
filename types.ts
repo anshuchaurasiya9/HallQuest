@@ -6,7 +6,9 @@ export enum AppState {
   HOME = 'HOME',
   RESULTS = 'RESULTS',
   DETAIL = 'DETAIL',
-  PROFILE = 'PROFILE'
+  PROFILE = 'PROFILE',
+  SERVICES = 'SERVICES',
+  LIST_VENUE = 'LIST_VENUE'
 }
 
 export interface User {
@@ -20,6 +22,7 @@ export interface Service {
   name: string;
   description: string;
   price?: string;
+  icon?: string;
 }
 
 export interface Review {

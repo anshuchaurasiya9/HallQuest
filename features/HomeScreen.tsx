@@ -9,7 +9,9 @@ const HomeScreen: React.FC<{
   onSelectHall: (hall: Hall) => void; 
   onOpenProfile: () => void;
   onLoginClick: () => void;
-}> = ({ user, onSelectHall, onOpenProfile, onLoginClick }) => {
+  onServicesClick: () => void;
+  onListVenueClick: () => void;
+}> = ({ user, onSelectHall, onOpenProfile, onLoginClick, onServicesClick, onListVenueClick }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [cityFilter, setCityFilter] = useState('All Cities');
@@ -34,9 +36,9 @@ const HomeScreen: React.FC<{
 
           <div className="flex items-center space-x-4 md:space-x-8">
             <nav className="hidden md:flex items-center space-x-6 text-sm font-semibold text-slate-600">
-              <button className="hover:text-indigo-600 transition-colors">Find Halls</button>
-              <button className="hover:text-indigo-600 transition-colors">Services</button>
-              <button className="hover:text-indigo-600 transition-colors">List Your Venue</button>
+              <button onClick={() => window.scrollTo({top: 600, behavior: 'smooth'})} className="hover:text-indigo-600 transition-colors">Find Halls</button>
+              <button onClick={onServicesClick} className="hover:text-indigo-600 transition-colors">Services</button>
+              <button onClick={onListVenueClick} className="hover:text-indigo-600 transition-colors">List Your Venue</button>
             </nav>
             
             {user ? (
