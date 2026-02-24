@@ -7,7 +7,7 @@ const ONBOARDING_DATA = [
     title: "Dream Venues Await",
     desc: "Discover premium halls that match your style. From grand ballrooms to cozy lounges, find your perfect space effortlessly.",
     emoji: "🏰",
-    color: "from-indigo-600 via-indigo-700 to-indigo-900",
+    color: "from-brand-primary via-pink-600 to-pink-900",
     accent: "bg-white/10"
   },
   {
@@ -21,7 +21,7 @@ const ONBOARDING_DATA = [
     title: "Direct Connections",
     desc: "Skip the middlemen. Connect directly with hall managers for transparent quotes and confirmed bookings.",
     emoji: "🤝",
-    color: "from-blue-600 via-indigo-800 to-indigo-950",
+    color: "from-brand-secondary via-emerald-700 to-emerald-900",
     accent: "bg-white/10"
   }
 ];
@@ -44,7 +44,7 @@ const OnboardingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) 
         {/* Animated Background Elements */}
         <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/20 rounded-full blur-[100px] animate-pulse"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-400/20 rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-400/20 rounded-full blur-[120px]"></div>
         </div>
 
         <div className="relative z-10 transition-all duration-700 transform hover:scale-105">
@@ -57,7 +57,7 @@ const OnboardingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) 
           <h2 className="text-4xl md:text-6xl font-black text-white poppins leading-none tracking-tight animate-slideUp">
             {ONBOARDING_DATA[step].title}
           </h2>
-          <p className="text-indigo-100/70 text-lg font-medium leading-relaxed px-4 animate-fadeIn">
+          <p className="text-pink-100/70 text-lg font-medium leading-relaxed px-4 animate-fadeIn">
             {ONBOARDING_DATA[step].desc}
           </p>
         </div>
@@ -70,13 +70,13 @@ const OnboardingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) 
             {ONBOARDING_DATA.map((_, i) => (
               <div 
                 key={i} 
-                className={`h-2 rounded-full transition-all duration-700 ${i === step ? 'w-12 bg-indigo-600' : 'w-4 bg-slate-100'}`}
+                className={`h-2 rounded-full transition-all duration-700 ${i === step ? 'w-12 bg-brand-primary' : 'w-4 bg-slate-100'}`}
               />
             ))}
           </div>
           <button 
             onClick={onComplete} 
-            className="text-xs font-black uppercase tracking-[0.2em] text-slate-300 hover:text-indigo-600 transition-all hover:tracking-[0.3em]"
+            className="text-xs font-black uppercase tracking-[0.2em] text-slate-300 hover:text-brand-primary transition-all hover:tracking-[0.3em]"
           >
             Skip
           </button>
@@ -84,7 +84,7 @@ const OnboardingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) 
 
         <div className="space-y-12">
           <div className="space-y-6">
-            <div className="inline-block px-4 py-1.5 bg-indigo-50 rounded-xl text-[10px] font-black text-indigo-600 uppercase tracking-widest border border-indigo-100">
+            <div className="inline-block px-4 py-1.5 bg-brand-accent rounded-xl text-[10px] font-black text-brand-primary uppercase tracking-widest border border-brand-primary/10">
               Welcome to the Future
             </div>
             <h3 className="text-4xl md:text-5xl font-black text-slate-900 poppins leading-[1.1] tracking-tighter">
@@ -100,7 +100,7 @@ const OnboardingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) 
               label={step === ONBOARDING_DATA.length - 1 ? "Get Started" : "Continue"} 
               onClick={handleNext} 
               fullWidth 
-              className="py-6 text-xl shadow-[0_20px_50px_-15px_rgba(79,70,229,0.3)] hover:shadow-[0_30px_60px_-15px_rgba(79,70,229,0.4)]"
+              className="py-6 text-xl shadow-[0_20px_50px_-15px_rgba(231,46,119,0.3)]"
             />
             <div className="flex items-center justify-center space-x-3 text-slate-300">
                <div className="h-px w-8 bg-slate-100"></div>

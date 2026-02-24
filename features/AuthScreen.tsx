@@ -31,7 +31,7 @@ const AuthScreen: React.FC<{
       {onBack && (
         <button 
           onClick={onBack} 
-          className="absolute top-8 left-8 p-4 bg-white rounded-2xl shadow-sm text-slate-600 font-bold hover:text-indigo-600 transition-all border border-slate-100"
+          className="absolute top-8 left-8 p-4 bg-white rounded-2xl shadow-sm text-slate-600 font-bold hover:text-brand-primary transition-all border border-slate-100"
         >
           ← Exit
         </button>
@@ -39,7 +39,7 @@ const AuthScreen: React.FC<{
 
       <div className="w-full max-w-md bg-white p-12 rounded-[3.5rem] shadow-2xl border border-slate-100 space-y-10 relative">
         <div className="space-y-3 text-center">
-          <div className="w-20 h-20 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-white text-4xl mx-auto shadow-2xl shadow-indigo-200 mb-8 transform rotate-3">
+          <div className="w-20 h-20 bg-brand-primary rounded-[2rem] flex items-center justify-center text-white text-4xl mx-auto shadow-2xl shadow-pink-100 mb-8 transform rotate-3">
             🏛️
           </div>
           <h2 className="text-3xl font-black text-slate-900 poppins tracking-tight">
@@ -54,7 +54,7 @@ const AuthScreen: React.FC<{
           {!isLogin && (
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Full Name</label>
-              <input type="text" placeholder="John Doe" className="w-full p-5 bg-slate-50 rounded-3xl border-2 border-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 text-black font-bold transition-all" />
+              <input type="text" placeholder="John Doe" className="w-full p-5 bg-slate-50 rounded-3xl border-2 border-slate-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary text-black font-bold transition-all" />
             </div>
           )}
           
@@ -63,7 +63,7 @@ const AuthScreen: React.FC<{
             <input 
               type="email" 
               placeholder="name@example.com" 
-              className="w-full p-5 bg-slate-50 rounded-3xl border-2 border-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 text-black font-bold transition-all"
+              className="w-full p-5 bg-slate-50 rounded-3xl border-2 border-slate-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary text-black font-bold transition-all"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -74,7 +74,7 @@ const AuthScreen: React.FC<{
             <input 
               type="password" 
               placeholder="••••••••" 
-              className="w-full p-5 bg-slate-50 rounded-3xl border-2 border-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 text-black font-bold transition-all"
+              className="w-full p-5 bg-slate-50 rounded-3xl border-2 border-slate-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary text-black font-bold transition-all"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -82,7 +82,7 @@ const AuthScreen: React.FC<{
           
           {isLogin && (
             <div className="flex justify-end">
-              <button type="button" className="text-xs font-black text-indigo-600 hover:underline uppercase tracking-widest">Forgot Password?</button>
+              <button type="button" className="text-xs font-black text-brand-primary hover:underline uppercase tracking-widest">Forgot Password?</button>
             </div>
           )}
 
@@ -90,8 +90,9 @@ const AuthScreen: React.FC<{
             <Button 
               label={isLoading ? "Authenticating..." : (isLogin ? "Sign In" : "Sign Up")} 
               fullWidth 
+              variant="darkGradient"
               disabled={!email || !password || isLoading} 
-              className="py-5 shadow-xl shadow-indigo-100"
+              className="py-5"
             />
           </div>
         </form>
@@ -103,7 +104,7 @@ const AuthScreen: React.FC<{
             </span>
             <button 
               onClick={() => setIsLogin(!isLogin)} 
-              className="text-indigo-600 font-black text-sm hover:underline uppercase tracking-tighter"
+              className="text-brand-primary font-black text-sm hover:underline uppercase tracking-tighter"
             >
               {isLogin ? "Create Account" : "Log In"}
             </button>

@@ -1,7 +1,8 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+// Always use process.env.API_KEY directly for initialization
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const getVenueAIInsight = async (hallName: string, amenities: string[]) => {
   try {
