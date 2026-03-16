@@ -103,7 +103,7 @@ const HomeScreen: React.FC<{
       </header>
 
       {/* Hero Section */}
-      <section className="relative h-[400px] md:h-[550px] flex items-center justify-center bg-slate-900 overflow-hidden">
+      <section className="relative h-[450px] md:h-[550px] flex items-center justify-center bg-slate-900 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=2000" 
@@ -113,32 +113,32 @@ const HomeScreen: React.FC<{
           <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/40 via-transparent to-white"></div>
         </div>
 
-        <div className="relative z-10 w-full px-6 text-center space-y-8">
-          <div className="space-y-4 max-w-5xl mx-auto">
-            <h2 className="text-5xl md:text-7xl font-black text-white poppins leading-[1.1] tracking-tighter drop-shadow-2xl">
+        <div className="relative z-10 w-full px-4 md:px-6 text-center space-y-6 md:space-y-8">
+          <div className="space-y-3 md:space-y-4 max-w-5xl mx-auto">
+            <h2 className="text-4xl md:text-7xl font-black text-white poppins leading-[1.1] tracking-tighter drop-shadow-2xl">
               Celebrate Life in <span className="text-brand-primary">Perfect Venues</span>
             </h2>
-            <p className="text-lg md:text-xl text-pink-50 font-medium opacity-90 max-w-3xl mx-auto">
+            <p className="text-base md:text-xl text-pink-50 font-medium opacity-90 max-w-3xl mx-auto px-4">
               Discover, Compare & Book premium function halls across your city.
             </p>
           </div>
 
           {/* Search Module */}
-          <div className="bg-white p-2 rounded-[2rem] shadow-2xl flex flex-col md:flex-row items-stretch md:items-center gap-2 max-w-4xl mx-auto border border-pink-50">
-            <div className="flex-1 flex items-center px-6 py-3 border-b md:border-b-0 md:border-r border-pink-50 group">
-              <span className="text-xl mr-3 opacity-40">🔍</span>
+          <div className="bg-white p-1.5 md:p-2 rounded-3xl md:rounded-[2rem] shadow-2xl flex flex-col md:flex-row items-stretch md:items-center gap-1 md:gap-2 max-w-4xl mx-auto border border-pink-50">
+            <div className="flex-1 flex items-center px-4 md:px-6 py-2.5 md:py-3 border-b md:border-b-0 md:border-r border-pink-50 group">
+              <span className="text-lg md:text-xl mr-2 md:mr-3 opacity-40">🔍</span>
               <input 
                 type="text" 
                 placeholder="Search by hall name..."
-                className="w-full bg-transparent border-none focus:outline-none text-slate-900 font-bold placeholder-slate-400 text-base"
+                className="w-full bg-transparent border-none focus:outline-none text-slate-900 font-bold placeholder-slate-400 text-sm md:text-base"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex-[0.6] flex items-center px-6 py-3 border-b md:border-b-0 md:border-r border-pink-50">
-              <span className="text-xl mr-3 opacity-40 text-brand-primary">📍</span>
+            <div className="flex-[0.6] flex items-center px-4 md:px-6 py-2.5 md:py-3 border-b md:border-b-0 md:border-r border-pink-50">
+              <span className="text-lg md:text-xl mr-2 md:mr-3 opacity-40 text-brand-primary">📍</span>
               <select 
-                className="w-full bg-transparent border-none focus:outline-none text-slate-700 font-bold cursor-pointer appearance-none text-base"
+                className="w-full bg-transparent border-none focus:outline-none text-slate-700 font-bold cursor-pointer appearance-none text-sm md:text-base"
                 value={cityFilter}
                 onChange={(e) => setCityFilter(e.target.value)}
               >
@@ -146,22 +146,22 @@ const HomeScreen: React.FC<{
                 {CITIES.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
               </select>
             </div>
-            <Button label="Search" className="py-4 px-8 rounded-2xl" />
+            <Button label="Search" className="py-3 md:py-4 px-6 md:px-8 rounded-2xl text-sm md:text-base" />
           </div>
         </div>
       </section>
 
       {/* City Filter Carousel */}
-      <section className="max-w-[1400px] mx-auto w-full px-6 md:px-12 py-12">
-        <div className="flex items-center space-x-10 overflow-x-auto no-scrollbar pb-4">
+      <section className="max-w-[1400px] mx-auto w-full px-4 md:px-12 py-8 md:py-12">
+        <div className="flex items-center space-x-6 md:space-x-10 overflow-x-auto no-scrollbar pb-2 md:pb-4">
           <button 
             onClick={() => setCityFilter('All Cities')}
-            className="flex flex-col items-center space-y-3 shrink-0 group focus:outline-none"
+            className="flex flex-col items-center space-y-2 md:space-y-3 shrink-0 group focus:outline-none"
           >
-            <div className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl border-4 transition-all duration-300 ${cityFilter === 'All Cities' ? 'border-brand-primary shadow-lg scale-110 bg-brand-accent' : 'border-white bg-slate-100 shadow-sm group-hover:border-pink-200'}`}>
+            <div className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-xl md:text-2xl border-4 transition-all duration-300 ${cityFilter === 'All Cities' ? 'border-brand-primary shadow-lg scale-110 bg-brand-accent' : 'border-white bg-slate-100 shadow-sm group-hover:border-pink-200'}`}>
               🌍
             </div>
-            <span className={`text-xs font-bold transition-colors ${cityFilter === 'All Cities' ? 'text-brand-primary' : 'text-slate-500'}`}>
+            <span className={`text-[10px] md:text-xs font-bold transition-colors ${cityFilter === 'All Cities' ? 'text-brand-primary' : 'text-slate-500'}`}>
               All Cities
             </span>
           </button>
@@ -170,53 +170,46 @@ const HomeScreen: React.FC<{
             <button 
               key={city.name}
               onClick={() => setCityFilter(city.name)}
-              className="flex flex-col items-center space-y-3 shrink-0 group focus:outline-none"
+              className="flex flex-col items-center space-y-2 md:space-y-3 shrink-0 group focus:outline-none"
             >
-              <div className={`w-20 h-20 rounded-full border-4 transition-all duration-300 overflow-hidden ${cityFilter === city.name ? 'border-brand-primary shadow-lg scale-110' : 'border-white shadow-sm group-hover:border-pink-200'}`}>
+              <div className={`w-16 h-16 md:w-20 md:h-20 rounded-full border-4 transition-all duration-300 overflow-hidden ${cityFilter === city.name ? 'border-brand-primary shadow-lg scale-110' : 'border-white shadow-sm group-hover:border-pink-200'}`}>
                 <img src={city.img} alt={city.name} className="w-full h-full object-cover" />
               </div>
-              <span className={`text-xs font-bold transition-colors ${cityFilter === city.name ? 'text-brand-primary' : 'text-slate-500'}`}>
+              <span className={`text-[10px] md:text-xs font-bold transition-colors ${cityFilter === city.name ? 'text-brand-primary' : 'text-slate-500'}`}>
                 {city.name}
               </span>
             </button>
           ))}
-          
-          <button className="flex flex-col items-center space-y-3 shrink-0 focus:outline-none cursor-default">
-            <div className="w-20 h-20 rounded-full bg-slate-700 flex items-center justify-center text-white text-lg font-bold border-4 border-white shadow-sm">
-              +40
-            </div>
-            <span className="text-xs font-bold text-slate-500 opacity-0">Hidden</span>
-          </button>
         </div>
       </section>
 
       {/* Featured Section */}
-      <main className="w-full max-w-[1400px] mx-auto px-6 md:px-12 py-8 relative z-20">
+      <main className="w-full max-w-[1400px] mx-auto px-4 md:px-12 py-4 md:py-8 relative z-20">
         
         {/* Quick Filter Categories */}
-        <div className="flex flex-wrap justify-center gap-6 mb-16">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-10 md:mb-16">
           {CATEGORIES.map(cat => (
             <button 
               key={cat.id}
               onClick={() => setSelectedCategory(selectedCategory === cat.name ? null : cat.name)}
-              className={`group flex flex-col items-center justify-center w-24 h-24 md:w-32 md:h-32 rounded-[2rem] transition-all duration-500 border-2 ${selectedCategory === cat.name ? 'bg-brand-primary border-brand-primary text-white shadow-xl shadow-pink-100 -translate-y-2' : 'bg-white border-pink-50 text-slate-500 hover:border-pink-200 hover:shadow-lg'}`}
+              className={`group flex flex-col items-center justify-center w-20 h-20 md:w-32 md:h-32 rounded-2xl md:rounded-[2rem] transition-all duration-500 border-2 ${selectedCategory === cat.name ? 'bg-brand-primary border-brand-primary text-white shadow-xl shadow-pink-100 -translate-y-1 md:-translate-y-2' : 'bg-white border-pink-50 text-slate-500 hover:border-pink-200 hover:shadow-lg'}`}
             >
-              <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">{cat.icon}</span>
-              <span className="text-[10px] font-black uppercase tracking-widest">{cat.name}</span>
+              <span className="text-2xl md:text-3xl mb-1 md:mb-2 group-hover:scale-110 transition-transform">{cat.icon}</span>
+              <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest">{cat.name}</span>
             </button>
           ))}
         </div>
 
         {/* Listings */}
-        <div className="space-y-12">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-pink-50 pb-6">
-            <div className="space-y-2">
-              <h2 className="text-3xl md:text-4xl font-black text-slate-900 poppins tracking-tighter">
+        <div className="space-y-8 md:space-y-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 border-b border-pink-50 pb-4 md:pb-6">
+            <div className="space-y-1 md:space-y-2">
+              <h2 className="text-2xl md:text-4xl font-black text-slate-900 poppins tracking-tighter">
                 {cityFilter === 'All Cities' ? 'Premium Spaces' : `Top Venues in ${cityFilter}`}
               </h2>
-              <p className="text-slate-500 text-base font-medium">Handpicked luxury venues matching your requirements</p>
+              <p className="text-slate-500 text-sm md:text-base font-medium">Handpicked luxury venues matching your requirements</p>
             </div>
-            <div className="flex items-center space-x-3 text-[10px] text-slate-400 font-black uppercase tracking-widest bg-slate-50 px-4 py-2 rounded-xl border border-pink-50">
+            <div className="flex items-center space-x-3 text-[9px] md:text-[10px] text-slate-400 font-black uppercase tracking-widest bg-slate-50 px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl border border-pink-50 self-start md:self-auto">
               <span>Sort by:</span>
               <select className="bg-transparent text-brand-primary border-none focus:outline-none cursor-pointer font-black">
                 <option>Recommended</option>
@@ -226,59 +219,59 @@ const HomeScreen: React.FC<{
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {filteredHalls.length > 0 ? filteredHalls.map(hall => (
               <div 
                 key={hall.id} 
                 onClick={() => onSelectHall(hall)}
-                className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer border border-pink-50 flex flex-col h-full ring-1 ring-pink-50"
+                className="group bg-white rounded-3xl md:rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer border border-pink-50 flex flex-col h-full ring-1 ring-pink-50"
               >
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-56 md:h-64 overflow-hidden">
                   <img src={hall.images[0]} alt={hall.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-lg text-[9px] font-black text-brand-dark shadow-sm border border-pink-50 uppercase tracking-widest">
+                  <div className="absolute top-3 left-3 md:top-4 md:left-4 bg-white/95 backdrop-blur px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-[8px] md:text-[9px] font-black text-brand-dark shadow-sm border border-pink-50 uppercase tracking-widest">
                     {hall.category}
                   </div>
-                  <div className="absolute top-4 right-4 bg-brand-primary text-white px-3 py-1.5 rounded-lg text-[10px] font-black shadow-lg flex items-center space-x-1">
+                  <div className="absolute top-3 right-3 md:top-4 md:right-4 bg-brand-primary text-white px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-[9px] md:text-[10px] font-black shadow-lg flex items-center space-x-1">
                     <span>⭐</span>
                     <span>{hall.rating}</span>
                   </div>
                 </div>
                 
-                <div className="p-8 space-y-5 flex-1 flex flex-col">
+                <div className="p-6 md:p-8 space-y-4 md:space-y-5 flex-1 flex flex-col">
                   <div className="space-y-1">
-                    <h3 className="font-black text-slate-900 text-xl leading-tight group-hover:text-brand-primary transition-colors poppins tracking-tight">{hall.name}</h3>
-                    <p className="text-sm text-slate-400 flex items-center font-medium">
-                      <span className="mr-2 opacity-60 text-brand-primary">📍</span> {hall.location}
+                    <h3 className="font-black text-slate-900 text-lg md:text-xl leading-tight group-hover:text-brand-primary transition-colors poppins tracking-tight">{hall.name}</h3>
+                    <p className="text-xs md:text-sm text-slate-400 flex items-center font-medium">
+                      <span className="mr-1.5 md:mr-2 opacity-60 text-brand-primary">📍</span> {hall.location}
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 py-4 border-y border-pink-50">
+                  <div className="grid grid-cols-2 gap-3 md:gap-4 py-3 md:py-4 border-y border-pink-50">
                     <div className="space-y-0.5">
-                      <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Capacity</p>
-                      <p className="text-sm font-black text-slate-700 poppins">{hall.capacity.split(' ')[0]}</p>
+                      <p className="text-[8px] md:text-[9px] font-black text-slate-300 uppercase tracking-widest">Capacity</p>
+                      <p className="text-xs md:text-sm font-black text-slate-700 poppins">{hall.capacity.split(' ')[0]}</p>
                     </div>
                     <div className="space-y-0.5">
-                      <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Price</p>
-                      <p className="text-sm font-black text-brand-primary poppins">{hall.priceRange}</p>
+                      <p className="text-[8px] md:text-[9px] font-black text-slate-300 uppercase tracking-widest">Price</p>
+                      <p className="text-xs md:text-sm font-black text-brand-primary poppins">{hall.priceRange}</p>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 mt-auto">
+                  <div className="flex flex-wrap gap-1.5 md:gap-2 mt-auto">
                     {hall.amenities.slice(0, 2).map(am => (
-                      <span key={am} className="text-[8px] bg-brand-accent text-brand-primary px-2 py-1 rounded-md font-black uppercase tracking-widest border border-brand-primary/10">{am}</span>
+                      <span key={am} className="text-[7px] md:text-[8px] bg-brand-accent text-brand-primary px-1.5 md:px-2 py-0.5 md:py-1 rounded-md font-black uppercase tracking-widest border border-brand-primary/10">{am}</span>
                     ))}
                     {hall.amenities.length > 2 && (
-                      <span className="text-[8px] text-slate-300 font-black uppercase tracking-widest py-1">+{hall.amenities.length - 2}</span>
+                      <span className="text-[7px] md:text-[8px] text-slate-300 font-black uppercase tracking-widest py-1">+{hall.amenities.length - 2}</span>
                     )}
                   </div>
                 </div>
               </div>
             )) : (
-              <div className="col-span-full py-24 text-center bg-brand-accent/20 rounded-[3rem] border-2 border-dashed border-pink-100">
-                <div className="text-6xl mb-6 opacity-30">🔍</div>
-                <h3 className="text-2xl font-black text-slate-800 poppins">No venues found</h3>
-                <p className="text-slate-500 mt-2 text-base font-medium max-w-sm mx-auto">Try clearing filters or selecting a different city.</p>
-                <Button label="Reset All" variant="outline" className="mt-8 py-3 px-8 text-xs" onClick={() => {setSearchQuery(''); setSelectedCategory(null); setCityFilter('All Cities');}} />
+              <div className="col-span-full py-16 md:py-24 text-center bg-brand-accent/20 rounded-3xl md:rounded-[3rem] border-2 border-dashed border-pink-100">
+                <div className="text-5xl md:text-6xl mb-4 md:mb-6 opacity-30">🔍</div>
+                <h3 className="text-xl md:text-2xl font-black text-slate-800 poppins">No venues found</h3>
+                <p className="text-slate-500 mt-2 text-sm md:text-base font-medium max-w-xs md:max-w-sm mx-auto">Try clearing filters or selecting a different city.</p>
+                <Button label="Reset All" variant="outline" className="mt-6 md:mt-8 py-2.5 md:py-3 px-6 md:px-8 text-[10px] md:text-xs" onClick={() => {setSearchQuery(''); setSelectedCategory(null); setCityFilter('All Cities');}} />
               </div>
             )}
           </div>

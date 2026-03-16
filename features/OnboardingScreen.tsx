@@ -38,9 +38,9 @@ const OnboardingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) 
   };
 
   return (
-    <div className="flex-1 flex flex-col md:flex-row min-h-screen bg-white">
+    <div className="flex-1 flex flex-col md:flex-row min-h-screen bg-white overflow-hidden">
       {/* Visual Side */}
-      <div className={`flex-1 flex flex-col items-center justify-center p-12 text-center transition-all duration-1000 bg-gradient-to-br ${ONBOARDING_DATA[step].color} relative overflow-hidden`}>
+      <div className={`flex-[1.2] md:flex-1 flex flex-col items-center justify-center p-8 md:p-12 text-center transition-all duration-1000 bg-gradient-to-br ${ONBOARDING_DATA[step].color} relative overflow-hidden`}>
         {/* Animated Background Elements */}
         <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/20 rounded-full blur-[100px] animate-pulse"></div>
@@ -48,79 +48,79 @@ const OnboardingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) 
         </div>
 
         <div className="relative z-10 transition-all duration-700 transform hover:scale-105">
-          <div className="w-64 h-64 md:w-80 md:h-80 bg-white/5 backdrop-blur-3xl rounded-[4rem] flex items-center justify-center text-8xl md:text-9xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border border-white/10 animate-float">
+          <div className="w-48 h-48 md:w-80 md:h-80 bg-white/5 backdrop-blur-3xl rounded-[3rem] md:rounded-[4rem] flex items-center justify-center text-7xl md:text-9xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border border-white/10 animate-float">
             <span className="drop-shadow-2xl">{ONBOARDING_DATA[step].emoji}</span>
           </div>
         </div>
 
-        <div className="mt-16 space-y-6 max-w-md relative z-10">
-          <h2 className="text-4xl md:text-6xl font-black text-white poppins leading-none tracking-tight animate-slideUp">
+        <div className="mt-8 md:mt-16 space-y-4 md:space-y-6 max-w-md relative z-10">
+          <h2 className="text-3xl md:text-6xl font-black text-white poppins leading-tight tracking-tight animate-slideUp">
             {ONBOARDING_DATA[step].title}
           </h2>
-          <p className="text-pink-100/70 text-lg font-medium leading-relaxed px-4 animate-fadeIn">
+          <p className="text-pink-100/70 text-base md:text-lg font-medium leading-relaxed px-4 animate-fadeIn">
             {ONBOARDING_DATA[step].desc}
           </p>
         </div>
       </div>
 
       {/* Control Side */}
-      <div className="md:w-[550px] p-12 md:p-20 flex flex-col justify-between bg-white md:rounded-l-[4rem] shadow-[-30px_0_60px_rgba(0,0,0,0.05)] relative z-20">
+      <div className="flex-1 md:w-[550px] p-8 md:p-20 flex flex-col justify-between bg-white md:rounded-l-[4rem] shadow-[-30px_0_60px_rgba(0,0,0,0.05)] relative z-20 -mt-8 md:mt-0 rounded-t-[3rem] md:rounded-t-none">
         <div className="flex justify-between items-center">
           <div className="flex space-x-2">
             {ONBOARDING_DATA.map((_, i) => (
               <div 
                 key={i} 
-                className={`h-2 rounded-full transition-all duration-700 ${i === step ? 'w-12 bg-brand-primary' : 'w-4 bg-slate-100'}`}
+                className={`h-1.5 md:h-2 rounded-full transition-all duration-700 ${i === step ? 'w-8 md:w-12 bg-brand-primary' : 'w-3 md:w-4 bg-slate-100'}`}
               />
             ))}
           </div>
           <button 
             onClick={onComplete} 
-            className="text-xs font-black uppercase tracking-[0.2em] text-slate-300 hover:text-brand-primary transition-all hover:tracking-[0.3em]"
+            className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-slate-300 hover:text-brand-primary transition-all hover:tracking-[0.3em]"
           >
             Skip
           </button>
         </div>
-
-        <div className="space-y-12">
-          <div className="space-y-6">
-            <div className="inline-block px-4 py-1.5 bg-brand-accent rounded-xl text-[10px] font-black text-brand-primary uppercase tracking-widest border border-brand-primary/10">
+ 
+        <div className="space-y-8 md:space-y-12 py-8 md:py-0">
+          <div className="space-y-4 md:space-y-6">
+            <div className="inline-block px-3 py-1 bg-brand-accent rounded-lg text-[9px] font-black text-brand-primary uppercase tracking-widest border border-brand-primary/10">
               Welcome to the Future
             </div>
-            <h3 className="text-4xl md:text-5xl font-black text-slate-900 poppins leading-[1.1] tracking-tighter">
+            <h3 className="text-2xl md:text-5xl font-black text-slate-900 poppins leading-[1.1] tracking-tighter">
               The premium way to plan events.
             </h3>
-            <p className="text-slate-500 text-lg font-medium leading-relaxed">
+            <p className="text-slate-500 text-sm md:text-lg font-medium leading-relaxed">
               We've redesigned the venue booking experience from the ground up to be elegant, transparent, and lightning fast.
             </p>
           </div>
           
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <Button 
               label={step === ONBOARDING_DATA.length - 1 ? "Get Started" : "Continue"} 
               onClick={handleNext} 
               fullWidth 
-              className="py-6 text-xl shadow-[0_20px_50px_-15px_rgba(231,46,119,0.3)]"
+              className="py-4 md:py-6 text-lg md:text-xl shadow-[0_20px_50px_-15px_rgba(231,46,119,0.3)]"
             />
             <div className="flex items-center justify-center space-x-3 text-slate-300">
-               <div className="h-px w-8 bg-slate-100"></div>
-               <p className="text-[10px] font-black uppercase tracking-[0.2em]">Step {step + 1} of 3</p>
-               <div className="h-px w-8 bg-slate-100"></div>
+               <div className="h-px w-6 md:w-8 bg-slate-100"></div>
+               <p className="text-[9px] font-black uppercase tracking-[0.2em]">Step {step + 1} of 3</p>
+               <div className="h-px w-6 md:w-8 bg-slate-100"></div>
             </div>
           </div>
         </div>
 
-        <div className="pt-10 border-t border-slate-50 flex items-center justify-between">
-          <div className="flex -space-x-3">
+        <div className="pt-6 md:pt-10 border-t border-slate-50 flex items-center justify-between">
+          <div className="flex -space-x-2 md:-space-x-3">
             {[1,2,3,4].map(i => (
-              <div key={i} className="w-12 h-12 rounded-2xl border-4 border-white bg-slate-100 overflow-hidden shadow-sm transition-transform hover:scale-110 cursor-pointer">
+              <div key={i} className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl border-2 md:border-4 border-white bg-slate-100 overflow-hidden shadow-sm transition-transform hover:scale-110 cursor-pointer">
                 <img src={`https://i.pravatar.cc/150?u=user${i + 20}`} alt="Community" className="grayscale hover:grayscale-0 transition-all" />
               </div>
             ))}
           </div>
           <div className="text-right">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Join 50k+</p>
-            <p className="text-sm font-black text-slate-900 poppins">Happy Planners</p>
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Join 50k+</p>
+            <p className="text-xs md:text-sm font-black text-slate-900 poppins">Happy Planners</p>
           </div>
         </div>
       </div>
