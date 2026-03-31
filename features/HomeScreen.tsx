@@ -1,21 +1,30 @@
 
-import React, { useState } from 'react';
-import { MOCK_HALLS, CATEGORIES } from '../constants';
-import { Hall, User } from '../types';
+import React, { useState, useEffect } from 'react';
+import { MOCK_HALLS } from '../constants';
+import { Hall, User, Category, City, Property, Amenity } from '../types';
 import { Button } from '../components/SharedUI';
+import { fetchCategories, fetchCities, fetchProperties, fetchAmenities } from '../services/venueService';
 
-const CITIES = [
-  { name: 'Delhi NCR', img: 'https://images.unsplash.com/photo-1587474260584-1f35a4908f9f?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Mumbai', img: 'https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Bangalore', img: 'https://images.unsplash.com/photo-1596760411110-381a4b42918b?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Hyderabad', img: 'https://images.unsplash.com/photo-1572435212746-9b4176513600?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Chennai', img: 'https://images.unsplash.com/photo-1582512390367-97597531c309?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Goa', img: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Jaipur', img: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Pune', img: 'https://images.unsplash.com/photo-1562979314-bee7453e911c?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Kolkata', img: 'https://images.unsplash.com/photo-1558431382-bb7b38c49051?auto=format&fit=crop&q=80&w=200' },
-  { name: 'Lucknow', img: 'https://images.unsplash.com/photo-1588180864337-3742ed456ca9?auto=format&fit=crop&q=80&w=200' }
-];
+const CITY_IMAGES: Record<string, string> = {
+  'Delhi NCR': 'https://images.unsplash.com/photo-1587474260584-1f35a4908f9f?auto=format&fit=crop&q=80&w=200',
+  'Mumbai': 'https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?auto=format&fit=crop&q=80&w=200',
+  'Bangalore': 'https://images.unsplash.com/photo-1596760411110-381a4b42918b?auto=format&fit=crop&q=80&w=200',
+  'Hyderabad': 'https://images.unsplash.com/photo-1572435212746-9b4176513600?auto=format&fit=crop&q=80&w=200',
+  'Chennai': 'https://images.unsplash.com/photo-1582512390367-97597531c309?auto=format&fit=crop&q=80&w=200',
+  'Goa': 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80&w=200',
+  'Jaipur': 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&q=80&w=200',
+  'Pune': 'https://images.unsplash.com/photo-1562979314-bee7453e911c?auto=format&fit=crop&q=80&w=200',
+  'Kolkata': 'https://images.unsplash.com/photo-1558431382-bb7b38c49051?auto=format&fit=crop&q=80&w=200',
+  'Lucknow': 'https://images.unsplash.com/photo-1588180864337-3742ed456ca9?auto=format&fit=crop&q=80&w=200'
+};
+
+const CATEGORY_ICONS: Record<string, string> = {
+  'Wedding': '💍',
+  'Party': '🎉',
+  'Corporate': '💼',
+  'Birthday': '🎂',
+  'Seminar': '🎓'
+};
 
 const HomeScreen: React.FC<{ 
   user: User | null; 
@@ -29,8 +38,87 @@ const HomeScreen: React.FC<{
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [cityFilter, setCityFilter] = useState('All Cities');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
-  const filteredHalls = MOCK_HALLS.filter(hall => {
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [categoriesRes, citiesRes, propertiesRes, amenitiesRes] = await Promise.all([
+          fetchCategories(),
+          fetchCities(),
+          fetchProperties(),
+          fetchAmenities()
+        ]);
+
+        if (categoriesRes.success) {
+          setCategories(categoriesRes.data);
+          console.log(`✅ Categories fetched successfully`);
+        }
+
+        if (citiesRes.success) {
+          setCities(citiesRes.data);
+          console.log(`✅ Cities fetched successfully`);
+        }
+
+        if (propertiesRes.data) {
+          setProperties(propertiesRes.data);
+          console.log(`✅ Properties fetched successfully: ${propertiesRes.total} total`);
+        }
+
+        if (amenitiesRes.success) {
+          setAmenities(amenitiesRes.data);
+          console.log(`✅ Amenities fetched successfully`);
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const mapPropertyToHall = (property: Property): Hall => {
+    const city = cities.find(c => c.id === property.city_id);
+    const category = categories.find(cat => cat.id === property.category_id);
+    
+    return {
+      id: property.id,
+      name: property.title,
+      location: city ? city.name : 'Unknown Location',
+      capacity: `${property.guest_capacity} Guests`,
+      price: parseFloat(property.price),
+      rating: 4.5, // Default rating as API doesn't provide it
+      images: [property.media.find(m => m.type === 'image')?.file_url || 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=800'],
+      category: category ? category.name : 'Venue',
+      description: property.description || 'A premium function hall for your special events.',
+      amenities: property.amenities.length > 0 
+        ? property.amenities.map((am: any) => typeof am === 'string' ? am : (am.name || 'Amenity'))
+        : ['Parking', 'AC', 'Catering'],
+      amenityDetails: property.amenities.length > 0
+        ? property.amenities.map((am: any) => {
+            const amenityId = typeof am === 'object' ? am.id : null;
+            const amenityName = typeof am === 'string' ? am : am.name;
+            return amenities.find(a => (amenityId && a.id === amenityId) || a.name === amenityName) || (typeof am === 'object' ? am : { name: am } as Amenity);
+          })
+        : [],
+      reviewCount: property.favorite_count,
+      priceRange: `₹${property.price}`,
+      services: [],
+      reviews: [],
+      distance: '0.5 km'
+    };
+  };
+
+  const allHalls = properties.length > 0 ? properties.map(mapPropertyToHall) : MOCK_HALLS;
+
+  const filteredHalls = allHalls.filter(hall => {
     const matchesSearch = (hall.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           hall.location.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesCategory = (!selectedCategory || hall.category === selectedCategory);
@@ -143,7 +231,7 @@ const HomeScreen: React.FC<{
                 onChange={(e) => setCityFilter(e.target.value)}
               >
                 <option>All Cities</option>
-                {CITIES.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                {cities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
               </select>
             </div>
             <Button label="Search" className="py-3 md:py-4 px-6 md:px-8 rounded-2xl text-sm md:text-base" />
@@ -166,14 +254,14 @@ const HomeScreen: React.FC<{
             </span>
           </button>
           
-          {CITIES.map((city) => (
+          {cities.map((city) => (
             <button 
-              key={city.name}
+              key={city.id}
               onClick={() => setCityFilter(city.name)}
               className="flex flex-col items-center space-y-2 md:space-y-3 shrink-0 group focus:outline-none"
             >
               <div className={`w-16 h-16 md:w-20 md:h-20 rounded-full border-4 transition-all duration-300 overflow-hidden ${cityFilter === city.name ? 'border-brand-primary shadow-lg scale-110' : 'border-white shadow-sm group-hover:border-pink-200'}`}>
-                <img src={city.img} alt={city.name} className="w-full h-full object-cover" />
+                <img src={CITY_IMAGES[city.name] || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=200'} alt={city.name} className="w-full h-full object-cover" />
               </div>
               <span className={`text-[10px] md:text-xs font-bold transition-colors ${cityFilter === city.name ? 'text-brand-primary' : 'text-slate-500'}`}>
                 {city.name}
@@ -188,13 +276,13 @@ const HomeScreen: React.FC<{
         
         {/* Quick Filter Categories */}
         <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-10 md:mb-16">
-          {CATEGORIES.map(cat => (
+          {categories.map(cat => (
             <button 
               key={cat.id}
               onClick={() => setSelectedCategory(selectedCategory === cat.name ? null : cat.name)}
               className={`group flex flex-col items-center justify-center w-20 h-20 md:w-32 md:h-32 rounded-2xl md:rounded-[2rem] transition-all duration-500 border-2 ${selectedCategory === cat.name ? 'bg-brand-primary border-brand-primary text-white shadow-xl shadow-pink-100 -translate-y-1 md:-translate-y-2' : 'bg-white border-pink-50 text-slate-500 hover:border-pink-200 hover:shadow-lg'}`}
             >
-              <span className="text-2xl md:text-3xl mb-1 md:mb-2 group-hover:scale-110 transition-transform">{cat.icon}</span>
+              <span className="text-2xl md:text-3xl mb-1 md:mb-2 group-hover:scale-110 transition-transform">{CATEGORY_ICONS[cat.name] || '🏛️'}</span>
               <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest">{cat.name}</span>
             </button>
           ))}
@@ -257,9 +345,18 @@ const HomeScreen: React.FC<{
                   </div>
 
                   <div className="flex flex-wrap gap-1.5 md:gap-2 mt-auto">
-                    {hall.amenities.slice(0, 2).map(am => (
-                      <span key={am} className="text-[7px] md:text-[8px] bg-brand-accent text-brand-primary px-1.5 md:px-2 py-0.5 md:py-1 rounded-md font-black uppercase tracking-widest border border-brand-primary/10">{am}</span>
-                    ))}
+                    {hall.amenityDetails && hall.amenityDetails.length > 0 ? (
+                      hall.amenityDetails.slice(0, 2).map(am => (
+                        <span key={am.id || am.name} className="flex items-center gap-1 text-[7px] md:text-[8px] bg-brand-accent text-brand-primary px-1.5 md:px-2 py-0.5 md:py-1 rounded-md font-black uppercase tracking-widest border border-brand-primary/10">
+                          {am.icon_url && <img src={am.icon_url} alt={am.name} className="w-2 h-2 md:w-2.5 md:h-2.5 object-contain" referrerPolicy="no-referrer" />}
+                          {am.name}
+                        </span>
+                      ))
+                    ) : (
+                      hall.amenities.slice(0, 2).map(am => (
+                        <span key={am} className="text-[7px] md:text-[8px] bg-brand-accent text-brand-primary px-1.5 md:px-2 py-0.5 md:py-1 rounded-md font-black uppercase tracking-widest border border-brand-primary/10">{am}</span>
+                      ))
+                    )}
                     {hall.amenities.length > 2 && (
                       <span className="text-[7px] md:text-[8px] text-slate-300 font-black uppercase tracking-widest py-1">+{hall.amenities.length - 2}</span>
                     )}

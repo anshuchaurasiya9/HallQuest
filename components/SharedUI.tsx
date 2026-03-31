@@ -38,14 +38,16 @@ export const Input: React.FC<{
   placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}> = ({ label, type = "text", placeholder, value, onChange }) => (
+  required?: boolean;
+}> = ({ label, type = "text", placeholder, value, onChange, required = false }) => (
   <div className="flex flex-col space-y-1.5 w-full">
     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">{label}</label>
     <input 
       type={type}
       placeholder={placeholder}
-      value={value}
+      value={value || ''}
       onChange={onChange}
+      required={required}
       className="px-5 py-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary bg-white transition-all text-brand-dark font-medium"
     />
   </div>

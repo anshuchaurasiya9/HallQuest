@@ -245,9 +245,22 @@ const DetailScreen: React.FC<{
                       <div className="space-y-4 md:space-y-6">
                         <h3 className="text-xl md:text-2xl font-black text-brand-dark poppins">Amenities</h3>
                         <div className="flex flex-wrap gap-3 md:gap-4">
-                          {hall.amenities.map(am => (
-                            <span key={am} className="bg-brand-accent px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border border-brand-primary/10 text-brand-primary font-bold text-xs md:text-sm">✨ {am}</span>
-                          ))}
+                          {hall.amenityDetails && hall.amenityDetails.length > 0 ? (
+                            hall.amenityDetails.map(am => (
+                              <span key={am.id || am.name} className="flex items-center gap-2 bg-brand-accent px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border border-brand-primary/10 text-brand-primary font-bold text-xs md:text-sm">
+                                {am.icon_url ? (
+                                  <img src={am.icon_url} alt={am.name} className="w-4 h-4 md:w-5 md:h-5 object-contain" referrerPolicy="no-referrer" />
+                                ) : (
+                                  <span>✨</span>
+                                )}
+                                {am.name}
+                              </span>
+                            ))
+                          ) : (
+                            hall.amenities.map(am => (
+                              <span key={am} className="bg-brand-accent px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border border-brand-primary/10 text-brand-primary font-bold text-xs md:text-sm">✨ {am}</span>
+                            ))
+                          )}
                         </div>
                       </div>
                     </div>

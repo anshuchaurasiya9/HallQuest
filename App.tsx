@@ -17,7 +17,7 @@ const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<AppState>(AppState.SPLASH);
   const [user, setUser] = useState<User | null>(null);
   const [selectedHall, setSelectedHall] = useState<Hall | null>(null);
-  const [intendedAction, setIntendedAction] = useState<{ type: string; hall: Hall } | null>(null);
+  const [intendedAction, setIntendedAction] = useState<{ type: 'enquiry' | 'list_venue'; hall?: Hall } | null>(null);
 
   useEffect(() => {
     // Restore session if exists
@@ -47,8 +47,12 @@ const App: React.FC = () => {
     setUser(userData);
     localStorage.setItem('user_session', JSON.stringify(userData));
     if (intendedAction) {
-      setSelectedHall(intendedAction.hall);
-      setCurrentScreen(AppState.DETAIL);
+      if (intendedAction.type === 'enquiry' && intendedAction.hall) {
+        setSelectedHall(intendedAction.hall);
+        setCurrentScreen(AppState.DETAIL);
+      } else if (intendedAction.type === 'list_venue') {
+        setCurrentScreen(AppState.LIST_VENUE);
+      }
       setIntendedAction(null);
     } else {
       setCurrentScreen(AppState.HOME);
@@ -87,13 +91,31 @@ const App: React.FC = () => {
             onOpenProfile={() => setCurrentScreen(AppState.PROFILE)} 
             onLoginClick={() => setCurrentScreen(AppState.AUTH)}
             onServicesClick={() => setCurrentScreen(AppState.SERVICES)}
-            onListVenueClick={() => setCurrentScreen(AppState.LIST_VENUE)}
+            onListVenueClick={() => {
+              if (user) {
+                setCurrentScreen(AppState.LIST_VENUE);
+              } else {
+                setIntendedAction({ type: 'list_venue' });
+                setCurrentScreen(AppState.AUTH);
+              }
+            }}
           />
         );
       case AppState.SERVICES:
         return <ServicesScreen onBack={() => setCurrentScreen(AppState.HOME)} />;
       case AppState.LIST_VENUE:
-        return <ListYourVenueScreen onBack={() => setCurrentScreen(AppState.HOME)} />;
+        return user ? (
+          <ListYourVenueScreen 
+            user={user} 
+            onBack={() => setCurrentScreen(AppState.HOME)} 
+            onSuccess={() => setCurrentScreen(AppState.HOME)} 
+          />
+        ) : (
+          <AuthScreen 
+            onLoginSuccess={handleLoginSuccess} 
+            onBack={() => setCurrentScreen(AppState.HOME)} 
+          />
+        );
       case AppState.DETAIL:
         return selectedHall ? (
           <DetailScreen 

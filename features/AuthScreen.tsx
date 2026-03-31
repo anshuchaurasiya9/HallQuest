@@ -1,29 +1,62 @@
 
 import React, { useState } from 'react';
 import { Button, Input } from '../components/SharedUI';
+import { register, login } from '../services/authService';
 
 const AuthScreen: React.FC<{ 
   onLoginSuccess: (user: any) => void; 
   onBack?: () => void;
 }> = ({ onLoginSuccess, onBack }) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      onLoginSuccess({
-        id: 'u1',
-        name: email.split('@')[0],
-        email: email,
-        token: 'fake-jwt-token'
-      });
+    setError(null);
+
+    try {
+      if (isLogin) {
+        const response = await login({
+          email,
+          password,
+        });
+
+        if (response.success) {
+          onLoginSuccess({
+            ...response.data.user,
+            token: response.data.token,
+          });
+        } else {
+          setError(response.message || 'Login failed');
+        }
+      } else {
+        const response = await register({
+          name,
+          email,
+          password,
+          password_confirmation: passwordConfirmation,
+        });
+
+        if (response.success) {
+          onLoginSuccess({
+            ...response.data.user,
+            token: response.data.token,
+          });
+        } else {
+          setError(response.message || 'Registration failed');
+        }
+      }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during authentication');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -50,35 +83,51 @@ const AuthScreen: React.FC<{
           </p>
         </div>
 
+        {error && (
+          <div className="p-4 bg-red-50 border border-red-100 text-red-600 text-xs md:text-sm font-bold rounded-2xl text-center">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
           {!isLogin && (
-            <div className="space-y-1.5 md:space-y-2">
-              <label className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Full Name</label>
-              <input type="text" placeholder="John Doe" className="w-full p-4 md:p-5 bg-slate-50 rounded-2xl md:rounded-3xl border-2 border-slate-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary text-black font-bold transition-all text-sm md:text-base" />
-            </div>
+            <Input 
+              label="Full Name" 
+              placeholder="John Doe" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
           )}
           
-          <div className="space-y-1.5 md:space-y-2">
-            <label className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Email Address</label>
-            <input 
-              type="email" 
-              placeholder="name@example.com" 
-              className="w-full p-4 md:p-5 bg-slate-50 rounded-2xl md:rounded-3xl border-2 border-slate-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary text-black font-bold transition-all text-sm md:text-base"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+          <Input 
+            label="Email Address" 
+            type="email" 
+            placeholder="name@example.com" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-          <div className="space-y-1.5 md:space-y-2">
-            <label className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Password</label>
-            <input 
+          <Input 
+            label="Password" 
+            type="password" 
+            placeholder="••••••••" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          {!isLogin && (
+            <Input 
+              label="Confirm Password" 
               type="password" 
               placeholder="••••••••" 
-              className="w-full p-4 md:p-5 bg-slate-50 rounded-2xl md:rounded-3xl border-2 border-slate-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary text-black font-bold transition-all text-sm md:text-base"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={passwordConfirmation}
+              onChange={(e) => setPasswordConfirmation(e.target.value)}
+              required
             />
-          </div>
+          )}
           
           {isLogin && (
             <div className="flex justify-end">
@@ -91,7 +140,7 @@ const AuthScreen: React.FC<{
               label={isLoading ? "Authenticating..." : (isLogin ? "Sign In" : "Sign Up")} 
               fullWidth 
               variant="darkGradient"
-              disabled={!email || !password || isLoading} 
+              disabled={isLoading} 
               className="py-4 md:py-5 text-sm md:text-base"
             />
           </div>
@@ -103,7 +152,10 @@ const AuthScreen: React.FC<{
               {isLogin ? "New to the platform?" : "Already a member?"}
             </span>
             <button 
-              onClick={() => setIsLogin(!isLogin)} 
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setError(null);
+              }} 
               className="text-brand-primary font-black text-xs md:text-sm hover:underline uppercase tracking-tighter"
             >
               {isLogin ? "Create Account" : "Log In"}
