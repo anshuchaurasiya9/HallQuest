@@ -245,38 +245,39 @@ const ListYourVenueScreen: React.FC<{
           <div className="space-y-8 md:space-y-12 animate-fadeIn">
             <div className="text-center space-y-2">
               <h2 className="text-2xl md:text-3xl font-black poppins text-slate-900 tracking-tight">Amenities Selection</h2>
-              <p className="text-sm md:text-slate-400 font-medium">Grouped by category for easier navigation.</p>
+              <p className="text-sm md:text-slate-400 font-medium">Select all the features your venue offers to guests.</p>
             </div>
             
-            <div className="space-y-8 md:space-y-12">
+            <div className="space-y-10 md:space-y-16">
               {AMENITY_CATEGORIES.map((cat, catIdx) => (
-                <div key={catIdx} className="space-y-4 md:space-y-6">
-                   <div className="flex items-center space-x-3 md:space-x-4">
-                    <div className="h-px flex-1 bg-slate-100"></div>
-                    <span className="text-[8px] md:text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] md:tracking-[0.3em]">{cat.name}</span>
+                <div key={catIdx} className="space-y-6 md:space-y-8">
+                   <div className="flex items-center space-x-4">
+                    <span className="text-[10px] md:text-xs font-black text-slate-900 uppercase tracking-[0.3em]">{cat.name}</span>
                     <div className="h-px flex-1 bg-slate-100"></div>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                     {cat.items.map((item) => (
-                      <button 
+                      <label 
                         key={item.id}
-                        onClick={() => toggleAmenity(item.id)}
-                        className={`relative p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] flex flex-col items-center justify-center space-y-3 md:space-y-4 transition-all duration-500 border-2 md:border-4 ${selectedAmenities.includes(item.id) ? 'bg-white border-brand-primary shadow-2xl scale-105' : 'bg-slate-50/50 border-transparent hover:border-slate-100 active:scale-95'}`}
+                        className={`group relative p-5 md:p-6 rounded-2xl md:rounded-3xl flex items-center space-x-4 transition-all duration-300 border-2 cursor-pointer ${selectedAmenities.includes(item.id) ? 'bg-brand-accent/20 border-brand-primary shadow-md' : 'bg-white border-slate-100 hover:border-pink-200 hover:shadow-sm'}`}
                       >
-                        <span className="text-3xl md:text-4xl group-hover:scale-110 transition-transform">{item.icon}</span>
-                        <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-widest text-center ${selectedAmenities.includes(item.id) ? 'text-brand-primary' : 'text-slate-400'}`}>
-                          {item.label}
-                        </span>
+                        <div className="relative flex items-center justify-center">
+                          <input 
+                            type="checkbox" 
+                            className="peer appearance-none w-6 h-6 md:w-7 md:h-7 rounded-lg border-2 border-slate-200 checked:bg-brand-primary checked:border-brand-primary transition-all cursor-pointer"
+                            checked={selectedAmenities.includes(item.id)}
+                            onChange={() => toggleAmenity(item.id)}
+                          />
+                          <span className="absolute text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none text-xs md:text-sm font-black">✓</span>
+                        </div>
                         
-                        {selectedAmenities.includes(item.id) && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-brand-dark/80 rounded-2xl md:rounded-[2.2rem] animate-fadeIn backdrop-blur-[2px]">
-                             <div className="flex flex-col items-center">
-                                <div className="w-8 h-8 md:w-12 md:h-12 mb-1 md:mb-2 flex items-center justify-center text-2xl md:text-3xl">🔌</div>
-                                <span className="text-[8px] md:text-[10px] font-black text-white uppercase tracking-[0.1em] md:tracking-[0.2em]">Plugged In</span>
-                             </div>
-                          </div>
-                        )}
-                      </button>
+                        <div className="flex items-center space-x-3">
+                          <span className="text-2xl md:text-3xl group-hover:scale-110 transition-transform duration-300">{item.icon}</span>
+                          <span className={`text-[10px] md:text-xs font-black uppercase tracking-widest transition-colors ${selectedAmenities.includes(item.id) ? 'text-brand-primary' : 'text-slate-500'}`}>
+                            {item.label}
+                          </span>
+                        </div>
+                      </label>
                     ))}
                   </div>
                 </div>

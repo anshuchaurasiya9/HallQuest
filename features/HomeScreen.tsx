@@ -6,16 +6,16 @@ import { Button } from '../components/SharedUI';
 import { fetchCategories, fetchCities, fetchProperties, fetchAmenities } from '../services/venueService';
 
 const CITY_IMAGES: Record<string, string> = {
-  'Delhi NCR': 'https://images.unsplash.com/photo-1587474260584-1f35a4908f9f?auto=format&fit=crop&q=80&w=200',
+  'Delhi NCR': 'https://www.kalitravel.net/blog/wp-content/uploads/delhi-itinerary-india-gate-sunset-new-delhi.webp',
   'Mumbai': 'https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?auto=format&fit=crop&q=80&w=200',
-  'Bangalore': 'https://images.unsplash.com/photo-1596760411110-381a4b42918b?auto=format&fit=crop&q=80&w=200',
+  'Bangalore': 'https://s7ap1.scene7.com/is/image/incredibleindia/vidhana-soudha-bangalore-karnataka-hero?qlt=82&ts=1742199603184',
   'Hyderabad': 'https://images.unsplash.com/photo-1572435212746-9b4176513600?auto=format&fit=crop&q=80&w=200',
-  'Chennai': 'https://images.unsplash.com/photo-1582512390367-97597531c309?auto=format&fit=crop&q=80&w=200',
-  'Goa': 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80&w=200',
-  'Jaipur': 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&q=80&w=200',
-  'Pune': 'https://images.unsplash.com/photo-1562979314-bee7453e911c?auto=format&fit=crop&q=80&w=200',
-  'Kolkata': 'https://images.unsplash.com/photo-1558431382-bb7b38c49051?auto=format&fit=crop&q=80&w=200',
-  'Lucknow': 'https://images.unsplash.com/photo-1588180864337-3742ed456ca9?auto=format&fit=crop&q=80&w=200'
+  'Chennai': 'https://www.agoda.com/wp-content/uploads/2024/03/Chennai-India-scaled-e1710033849588.jpg',
+  'Goa': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5EU3o8TI1tZKRUvkYJmDa8WWBU8bJmX8RrQ&s',
+  'Jaipur': 'https://www.worldtribune.org/wp-content/uploads/sites/2/2024/01/GettyImages-1191232894.jpg',
+  'Pune': 'https://www.constructionworld.in/assets/uploads/707bc047df3a846cc4b1b9ba4b0ed587.webp',
+  'Kolkata': 'https://s3.india.com/wp-content/uploads/2025/07/kolkata-DIY.jpg',
+  'Lucknow': 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0e/b5/28/7c/chhota-imambara.jpg?w=600&h=500&s=1'
 };
 
 const CATEGORY_ICONS: Record<string, string> = {
