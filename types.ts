@@ -32,10 +32,18 @@ export interface Service {
 }
 
 export interface Review {
-  userName: string;
+  id?: number;
+  user_id?: number;
+  property_id?: number;
+  userName?: string;
   rating: number;
   comment: string;
-  date: string;
+  date?: string;
+  created_at?: string;
+  updated_at?: string;
+  user?: {
+    name: string;
+  };
 }
 
 export interface Amenity {
@@ -121,12 +129,29 @@ export interface City {
 }
 
 export interface EnquiryRequest {
-  hallId: string;
+  property_id: number | string;
   name: string;
   phone: string;
-  eventDate: string;
-  guestCount: number;
-  message: string;
+  event_date: string;
+  event_type: string;
+}
+
+export interface ReviewRequest {
+  property_id: number | string;
+  rating: number;
+  comment: string;
+}
+
+export interface PropertyFilterParams {
+  search?: string;
+  city_id?: number | string;
+  category_id?: number | string;
+  min_price?: number | string;
+  max_price?: number | string;
+  min_capacity?: number | string;
+  max_capacity?: number | string;
+  amenities?: (number | string)[];
+  page?: number;
 }
 
 export interface CreatePropertyRequest {

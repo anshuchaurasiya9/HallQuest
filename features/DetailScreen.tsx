@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { Hall, User } from '../types';
+import { Hall, User, EnquiryRequest, ReviewRequest } from '../types';
 import { Button } from '../components/SharedUI';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Heart, Share2, MapPin, Star, MessageSquare, Info, ShieldCheck, Camera } from 'lucide-react';
+import { submitEnquiry, submitReview, toggleFavorite } from '../services/venueService';
 
 const DetailScreen: React.FC<{ 
   hall: Hall; 
@@ -22,23 +23,64 @@ const DetailScreen: React.FC<{
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [localReviews, setLocalReviews] = useState(hall.reviews);
+  const [enquiryForm, setEnquiryForm] = useState({
+    name: user?.name || '',
+    phone: user?.phone || '',
+    event_date: '',
+    event_type: 'wedding'
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [hall]);
+    if (user) {
+      setEnquiryForm(prev => ({
+        ...prev,
+        name: user.name,
+        phone: user.phone || ''
+      }));
+    }
+  }, [hall, user]);
 
-  const handleEnquiryClick = (e: React.FormEvent) => {
+  const handleEnquirySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
       onAuthRequired();
       return;
     }
+    
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const enquiryData: EnquiryRequest = {
+        property_id: hall.id,
+        name: enquiryForm.name,
+        phone: enquiryForm.phone,
+        event_date: enquiryForm.event_date,
+        event_type: enquiryForm.event_type
+      };
+      
+      await submitEnquiry(enquiryData);
       setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
-    }, 1500);
+      setTimeout(() => setShowSuccess(false), 5000);
+      setEnquiryForm(prev => ({ ...prev, event_date: '' }));
+    } catch (error: any) {
+      alert(error.message || 'Failed to send enquiry');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!user) {
+      onAuthRequired();
+      return;
+    }
+    
+    try {
+      await toggleFavorite(hall.id, user.token);
+      setIsWishlisted(!isWishlisted);
+    } catch (error: any) {
+      alert(error.message || 'Failed to update favorite status');
+    }
   };
 
   const handleShare = async () => {
@@ -75,21 +117,39 @@ const DetailScreen: React.FC<{
     }
   };
 
-  const handleReviewSubmit = (e: React.FormEvent) => {
+  const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
       onAuthRequired();
       return;
     }
-    const review = {
-      userName: user.name,
-      rating: newReview.rating,
-      comment: newReview.comment,
-      date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-    };
-    setLocalReviews([review, ...localReviews]);
-    setIsReviewFormOpen(false);
-    setNewReview({ rating: 5, comment: '' });
+    
+    setIsSubmitting(true);
+    try {
+      const reviewData: ReviewRequest = {
+        property_id: hall.id,
+        rating: newReview.rating,
+        comment: newReview.comment
+      };
+      
+      await submitReview(reviewData, user.token);
+      
+      const review = {
+        userName: user.name,
+        rating: newReview.rating,
+        comment: newReview.comment,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      };
+      
+      setLocalReviews([review, ...localReviews]);
+      setIsReviewFormOpen(false);
+      setNewReview({ rating: 5, comment: '' });
+      alert('Review submitted successfully!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to submit review');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const nextImage = () => {
@@ -109,7 +169,7 @@ const DetailScreen: React.FC<{
         </button>
         <div className="flex items-center space-x-3">
           <button 
-            onClick={() => setIsWishlisted(!isWishlisted)}
+            onClick={handleToggleFavorite}
             className={`p-3 rounded-xl text-lg transition-all active:scale-90 ${isWishlisted ? 'bg-brand-primary text-white shadow-lg shadow-pink-200' : 'bg-brand-accent text-brand-primary'}`}
           >
             <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
@@ -380,10 +440,40 @@ const DetailScreen: React.FC<{
                     <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest">Bookings for 2025 now open</p>
                   </div>
 
-                  <form onSubmit={handleEnquiryClick} className="space-y-4 md:space-y-5">
-                    <input required placeholder="Your Full Name" className="w-full p-4 md:p-5 bg-slate-50 border border-pink-50 rounded-xl md:rounded-2xl text-xs md:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/10" />
-                    <input required placeholder="Phone Number" className="w-full p-4 md:p-5 bg-slate-50 border border-pink-50 rounded-xl md:rounded-2xl text-xs md:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/10" />
-                    <input required type="date" className="w-full p-4 md:p-5 bg-slate-50 border border-pink-50 rounded-xl md:rounded-2xl text-xs md:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/10" />
+                  <form onSubmit={handleEnquirySubmit} className="space-y-4 md:space-y-5">
+                    <input 
+                      required 
+                      placeholder="Your Full Name" 
+                      className="w-full p-4 md:p-5 bg-slate-50 border border-pink-50 rounded-xl md:rounded-2xl text-xs md:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/10" 
+                      value={enquiryForm.name}
+                      onChange={(e) => setEnquiryForm({...enquiryForm, name: e.target.value})}
+                    />
+                    <input 
+                      required 
+                      placeholder="Phone Number" 
+                      className="w-full p-4 md:p-5 bg-slate-50 border border-pink-50 rounded-xl md:rounded-2xl text-xs md:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/10" 
+                      value={enquiryForm.phone}
+                      onChange={(e) => setEnquiryForm({...enquiryForm, phone: e.target.value})}
+                    />
+                    <input 
+                      required 
+                      type="datetime-local" 
+                      className="w-full p-4 md:p-5 bg-slate-50 border border-pink-50 rounded-xl md:rounded-2xl text-xs md:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/10" 
+                      value={enquiryForm.event_date}
+                      onChange={(e) => setEnquiryForm({...enquiryForm, event_date: e.target.value})}
+                    />
+                    <select
+                      required
+                      className="w-full p-4 md:p-5 bg-slate-50 border border-pink-50 rounded-xl md:rounded-2xl text-xs md:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary/10"
+                      value={enquiryForm.event_type}
+                      onChange={(e) => setEnquiryForm({...enquiryForm, event_type: e.target.value})}
+                    >
+                      <option value="wedding">Wedding</option>
+                      <option value="party">Party</option>
+                      <option value="corporate">Corporate</option>
+                      <option value="birthday">Birthday</option>
+                      <option value="seminar">Seminar</option>
+                    </select>
                     
                     <Button label={isSubmitting ? "Sending..." : "Request Call Back"} fullWidth variant="primary" className="py-4 md:py-5 shadow-xl shadow-pink-100 text-sm md:text-base" />
                   </form>

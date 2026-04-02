@@ -1,5 +1,5 @@
 
-import { Category, City, Property, Amenity, CreatePropertyRequest } from '../types';
+import { Category, City, Property, Amenity, CreatePropertyRequest, EnquiryRequest, ReviewRequest, PropertyFilterParams } from '../types';
 
 const API_BASE_URL = 'https://bookmyfunctionhall.spryzen.in/api/v1';
 
@@ -65,8 +65,23 @@ export const fetchCities = async (): Promise<ApiResponse<City[]>> => {
   return response.json();
 };
 
-export const fetchProperties = async (page: number = 1): Promise<PaginatedResponse<Property>> => {
-  const response = await fetch(`${API_BASE_URL}/properties?page=${page}`, {
+export const fetchProperties = async (params: PropertyFilterParams = {}): Promise<PaginatedResponse<Property>> => {
+  const queryParams = new URLSearchParams();
+  
+  if (params.page) queryParams.append('page', String(params.page));
+  if (params.search) queryParams.append('search', params.search);
+  if (params.city_id) queryParams.append('city_id', String(params.city_id));
+  if (params.category_id) queryParams.append('category_id', String(params.category_id));
+  if (params.min_price) queryParams.append('min_price', String(params.min_price));
+  if (params.max_price) queryParams.append('max_price', String(params.max_price));
+  if (params.min_capacity) queryParams.append('min_capacity', String(params.min_capacity));
+  if (params.max_capacity) queryParams.append('max_capacity', String(params.max_capacity));
+  
+  if (params.amenities && params.amenities.length > 0) {
+    params.amenities.forEach(id => queryParams.append('amenities[]', String(id)));
+  }
+
+  const response = await fetch(`${API_BASE_URL}/properties?${queryParams.toString()}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -77,6 +92,23 @@ export const fetchProperties = async (page: number = 1): Promise<PaginatedRespon
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Failed to fetch properties');
+  }
+
+  return response.json();
+};
+
+export const fetchPropertyDetails = async (id: number | string): Promise<ApiResponse<Property>> => {
+  const response = await fetch(`${API_BASE_URL}/properties/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to fetch property details');
   }
 
   return response.json();
@@ -137,6 +169,79 @@ export const createProperty = async (data: CreatePropertyRequest, token: string)
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Failed to create property');
+  }
+
+  return response.json();
+};
+
+export const submitEnquiry = async (data: EnquiryRequest): Promise<ApiResponse<any>> => {
+  const response = await fetch(`${API_BASE_URL}/enquiry`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to submit enquiry');
+  }
+
+  return response.json();
+};
+
+export const submitReview = async (data: ReviewRequest, token: string): Promise<ApiResponse<any>> => {
+  const response = await fetch(`${API_BASE_URL}/review`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to submit review');
+  }
+
+  return response.json();
+};
+
+export const toggleFavorite = async (propertyId: number | string, token: string): Promise<ApiResponse<any>> => {
+  const response = await fetch(`${API_BASE_URL}/favorite/${propertyId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to update favorite status');
+  }
+
+  return response.json();
+};
+
+export const fetchFavorites = async (token: string): Promise<ApiResponse<Property[]>> => {
+  const response = await fetch(`${API_BASE_URL}/favorites`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to fetch favorites');
   }
 
   return response.json();

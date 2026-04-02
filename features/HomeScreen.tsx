@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { MOCK_HALLS } from '../constants';
 import { Hall, User, Category, City, Property, Amenity } from '../types';
 import { Button } from '../components/SharedUI';
-import { fetchCategories, fetchCities, fetchProperties, fetchAmenities } from '../services/venueService';
+import { Heart } from 'lucide-react';
+import { fetchCategories, fetchCities, fetchProperties, fetchAmenities, toggleFavorite } from '../services/venueService';
 
 const CITY_IMAGES: Record<string, string> = {
   'Delhi NCR': 'https://www.kalitravel.net/blog/wp-content/uploads/delhi-itinerary-india-gate-sunset-new-delhi.webp',
@@ -44,45 +45,75 @@ const HomeScreen: React.FC<{
   const [properties, setProperties] = useState<Property[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const loadInitialData = async () => {
+    try {
+      const [categoriesRes, citiesRes, amenitiesRes] = await Promise.all([
+        fetchCategories(),
+        fetchCities(),
+        fetchAmenities()
+      ]);
+
+      if (categoriesRes.success) setCategories(categoriesRes.data);
+      if (citiesRes.success) setCities(citiesRes.data);
+      if (amenitiesRes.success) setAmenities(amenitiesRes.data);
+    } catch (error) {
+      console.error('Error loading initial data:', error);
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
+
+  const loadProperties = async () => {
+    setIsSearching(true);
+    try {
+      const city = cities.find(c => c.name === cityFilter);
+      const category = categories.find(cat => cat.name === selectedCategory);
+      
+      const params = {
+        search: searchQuery,
+        city_id: city?.id,
+        category_id: category?.id,
+      };
+      
+      const propertiesRes = await fetchProperties(params);
+      if (propertiesRes.data) {
+        setProperties(propertiesRes.data);
+      }
+    } catch (error) {
+      console.error('Error loading properties:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [categoriesRes, citiesRes, propertiesRes, amenitiesRes] = await Promise.all([
-          fetchCategories(),
-          fetchCities(),
-          fetchProperties(),
-          fetchAmenities()
-        ]);
-
-        if (categoriesRes.success) {
-          setCategories(categoriesRes.data);
-          console.log(`✅ Categories fetched successfully`);
-        }
-
-        if (citiesRes.success) {
-          setCities(citiesRes.data);
-          console.log(`✅ Cities fetched successfully`);
-        }
-
-        if (propertiesRes.data) {
-          setProperties(propertiesRes.data);
-          console.log(`✅ Properties fetched successfully: ${propertiesRes.total} total`);
-        }
-
-        if (amenitiesRes.success) {
-          setAmenities(amenitiesRes.data);
-          console.log(`✅ Amenities fetched successfully`);
-        }
-      } catch (error) {
-        console.error('Error loading data:', error);
-      } finally {
-        setIsLoadingData(false);
-      }
-    };
-
-    loadData();
+    loadInitialData();
   }, []);
+
+  useEffect(() => {
+    if (!isLoadingData) {
+      loadProperties();
+    }
+  }, [searchQuery, selectedCategory, cityFilter, isLoadingData]);
+
+  const handleToggleFavorite = async (e: React.MouseEvent, propertyId: number) => {
+    e.stopPropagation();
+    if (!user) {
+      onLoginClick();
+      return;
+    }
+    
+    try {
+      await toggleFavorite(propertyId, user.token);
+      setProperties(prev => prev.map(p => 
+        p.id === propertyId ? { ...p, is_favorite: p.is_favorite ? 0 : 1 } : p
+      ));
+    } catch (error: any) {
+      alert(error.message || 'Failed to update favorite status');
+    }
+  };
 
   const mapPropertyToHall = (property: Property): Hall => {
     const city = cities.find(c => c.id === property.city_id);
@@ -116,15 +147,9 @@ const HomeScreen: React.FC<{
     };
   };
 
-  const allHalls = properties.length > 0 ? properties.map(mapPropertyToHall) : MOCK_HALLS;
+  const allHalls = properties.length > 0 ? properties.map(mapPropertyToHall) : (searchQuery || selectedCategory || cityFilter !== 'All Cities' ? [] : MOCK_HALLS);
 
-  const filteredHalls = allHalls.filter(hall => {
-    const matchesSearch = (hall.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          hall.location.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = (!selectedCategory || hall.category === selectedCategory);
-    const matchesCity = (cityFilter === 'All Cities' || hall.location.includes(cityFilter));
-    return matchesSearch && matchesCategory && matchesCity;
-  });
+  const filteredHalls = allHalls;
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
@@ -314,16 +339,24 @@ const HomeScreen: React.FC<{
                 onClick={() => onSelectHall(hall)}
                 className="group bg-white rounded-3xl md:rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer border border-pink-50 flex flex-col h-full ring-1 ring-pink-50"
               >
-                <div className="relative h-56 md:h-64 overflow-hidden">
-                  <img src={hall.images[0]} alt={hall.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                  <div className="absolute top-3 left-3 md:top-4 md:left-4 bg-white/95 backdrop-blur px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-[8px] md:text-[9px] font-black text-brand-dark shadow-sm border border-pink-50 uppercase tracking-widest">
-                    {hall.category}
+                  <div className="relative h-56 md:h-64 overflow-hidden">
+                    <img src={hall.images[0]} alt={hall.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                    <div className="absolute top-3 left-3 md:top-4 md:left-4 bg-white/95 backdrop-blur px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-[8px] md:text-[9px] font-black text-brand-dark shadow-sm border border-pink-50 uppercase tracking-widest">
+                      {hall.category}
+                    </div>
+                    <div className="absolute top-3 right-3 md:top-4 md:right-4 flex flex-col items-end space-y-2">
+                      <div className="bg-brand-primary text-white px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-[9px] md:text-[10px] font-black shadow-lg flex items-center space-x-1">
+                        <span>⭐</span>
+                        <span>{hall.rating}</span>
+                      </div>
+                      <button 
+                        onClick={(e) => handleToggleFavorite(e, hall.id as number)}
+                        className={`p-2 rounded-lg shadow-lg transition-all active:scale-90 ${properties.find(p => p.id === hall.id)?.is_favorite ? 'bg-brand-primary text-white' : 'bg-white/90 text-brand-primary hover:bg-white'}`}
+                      >
+                        <Heart className={`w-4 h-4 ${properties.find(p => p.id === hall.id)?.is_favorite ? 'fill-current' : ''}`} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="absolute top-3 right-3 md:top-4 md:right-4 bg-brand-primary text-white px-2 md:px-3 py-1 md:py-1.5 rounded-lg text-[9px] md:text-[10px] font-black shadow-lg flex items-center space-x-1">
-                    <span>⭐</span>
-                    <span>{hall.rating}</span>
-                  </div>
-                </div>
                 
                 <div className="p-6 md:p-8 space-y-4 md:space-y-5 flex-1 flex flex-col">
                   <div className="space-y-1">
